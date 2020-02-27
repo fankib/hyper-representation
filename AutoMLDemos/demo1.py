@@ -64,7 +64,7 @@ for _ in range(n_hyper_iterations):
                outer_objective_feed_dicts=validation_set_supplier)    
     print('inner:', L.eval(train_set_supplier()))
     print('outer:', E.eval(validation_set_supplier()))
-    print('correct on validation set', accuracy.eval(validation_set_supplier))
+    print('correct on validation set', accuracy.eval(validation_set_supplier()))
     print('learning rate', lr.eval())
     print('norm of examples weight', tf.norm(lambdas).eval())
     print('-'*50)
