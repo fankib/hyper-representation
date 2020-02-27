@@ -23,7 +23,8 @@ def g_logits(x,y):
 def evaluation(logits, labels):
     cls_labels = tf.argmax(labels,1)
     correct = tf.equal(tf.argmax(logits, 1), cls_labels)
-    return tf.reduce_sum(tf.cast(correct, tf.int32))
+    return tf.reduce_mean(tf.cast(correct, tf.float32))
+    #return tf.reduce_sum(tf.cast(correct, tf.int32))
     #correct = tf.nn.in_top_k(predictions=logits, targets=tf.cast(cls_labels, tf.int32), k=1)
     #correct = tf.nn.in_top_k(predictions=logits, targets=cls_labels, k=1)
     #return tf.reduce_sum(input_tensor=tf.cast(correct, tf.int32))
@@ -53,7 +54,7 @@ tf.global_variables_initializer().run()
 
 print('inner:', L.eval(train_set_supplier()))
 print('outer:', E.eval(validation_set_supplier()))
-print('correct on validation set', accuracy.eval(validation_set_supplier))
+print('correct on validation set', accuracy.eval(validation_set_supplier()))
 
 # print('-'*50)
 n_hyper_iterations = 10
