@@ -21,7 +21,7 @@ def g_logits(x,y):
     return logits
 
 def evaluation(logits, labels):
-  correct = tf.nn.in_top_k(predictions=logits, targets=labels, k=1)
+  correct = tf.nn.in_top_k(predictions=logits, targets=tf.cast(labels, tf.int32), k=1)
   return tf.reduce_sum(input_tensor=tf.cast(correct, tf.int32))
 
 
