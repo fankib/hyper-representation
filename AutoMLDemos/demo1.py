@@ -10,7 +10,7 @@ sess = tf.InteractiveSession()
 
 def get_data():
     # load a small portion of mnist data
-    datasets = far_ex.mnist(folder=os.path.join(os.getcwd(), 'MNIST_DATA'), partitions=(.1, .1,))
+    datasets = far_ex.mnist(data_root_folder=os.path.join(os.getcwd(), 'MNIST_DATA'), partitions=(.1, .1,))
     return datasets.train, datasets.validation
 
 
@@ -20,10 +20,15 @@ def g_logits(x,y):
         logits = layers.fully_connected(h1, int(y.shape[1]))
     return logits
 
+def evaluation(logits, labels):
+  correct = tf.nn.in_top_k(predictions=logits, targets=labels, k=1)
+  return tf.reduce_sum(input_tensor=tf.cast(correct, tf.int32))
+
 
 x = tf.placeholder(tf.float32, shape=(None, 28**2), name='x')
 y = tf.placeholder(tf.float32, shape=(None, 10), name='y')
 logits = g_logits(x,y)
+accuracy = evaluation(logits, y)
 train_set, validation_set = get_data()
 
 lambdas = far.get_hyperparameter('lambdas', tf.zeros(train_set.num_examples))
@@ -44,14 +49,17 @@ tf.global_variables_initializer().run()
 
 print('inner:', L.eval(train_set_supplier()))
 print('outer:', E.eval(validation_set_supplier()))
+print('correct on validation set', accuracy.eval(validation_set_supplier))
+
 # print('-'*50)
 n_hyper_iterations = 10
 for _ in range(n_hyper_iterations):
     hyper_step(T,
                inner_objective_feed_dicts=train_set_supplier,
-               outer_objective_feed_dicts=validation_set_supplier)
+               outer_objective_feed_dicts=validation_set_supplier)    
     print('inner:', L.eval(train_set_supplier()))
     print('outer:', E.eval(validation_set_supplier()))
+    print('correct on validation set', accuracy.eval(validation_set_supplier))
     print('learning rate', lr.eval())
     print('norm of examples weight', tf.norm(lambdas).eval())
     print('-'*50)
