@@ -22,9 +22,11 @@ def g_logits(x,y):
 
 def evaluation(logits, labels):
     cls_labels = tf.argmax(labels,1)
+    correct = tf.equal(tf.argmax(logits, 1), cls_labels)
+    return tf.reduce_sum(correct)
     #correct = tf.nn.in_top_k(predictions=logits, targets=tf.cast(cls_labels, tf.int32), k=1)
-    correct = tf.nn.in_top_k(predictions=logits, targets=cls_labels, k=1)
-    return tf.reduce_sum(input_tensor=tf.cast(correct, tf.int32))
+    #correct = tf.nn.in_top_k(predictions=logits, targets=cls_labels, k=1)
+    #return tf.reduce_sum(input_tensor=tf.cast(correct, tf.int32))
 
 
 x = tf.placeholder(tf.float32, shape=(None, 28**2), name='x')
